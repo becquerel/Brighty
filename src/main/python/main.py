@@ -30,6 +30,7 @@ class MonitorSlider(QSlider):
 
 
 i = 0
+active_outputs = []
 for line in xrandr_output.split('\n'):
     i += 1
     if i == 1:
@@ -52,6 +53,7 @@ for line in xrandr_output.split('\n'):
         continue
 
     print('Creating slider ...')
+    active_outputs.append(output)
     layout.addWidget(QLabel(output))
 
     slider = MonitorSlider(Qt.Horizontal)
@@ -64,6 +66,8 @@ for line in xrandr_output.split('\n'):
 window.setLayout(layout)
 window.show()
 exit_code = appctxt.app.exec_()      # 2. Invoke appctxt.app.exec_()
-sys.exit(exit_code)
 
-# app.exec_()
+for output in active_outputs:
+    subprocess.run(['xrandr', '--output', output, '--brightness', str(1)])
+
+sys.exit(exit_code)
